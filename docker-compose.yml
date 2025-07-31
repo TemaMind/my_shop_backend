@@ -1,0 +1,25 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5555:5555"
+    extra_hosts:
+      - "bot-igor.ru:83.217.222.216"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      - FETCH_INTERVAL_SECONDS=${FETCH_INTERVAL_SECONDS:-300}
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER:-shop}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-shop_pass}
+      - POSTGRES_DB=${DB_NAME:-shop_db}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
