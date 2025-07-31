@@ -1,12 +1,30 @@
+"""
+Модуль конфигурации.
+
+Загружает настройки из переменных окружения с разумными
+значениями по умолчанию.
+"""
+
 import os
 
+
 class Config:
-    # Строка подключения к БД
+    """Класс базовой конфигурации приложения."""
+
+    # URI подключения SQLAlchemy.
+    # Формат: postgresql://user:password@host:port/dbname
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
-        f"postgresql://{os.getenv('DB_USER','shop')}:{os.getenv('DB_PASSWORD','shop_pass')}@"
-        f"{os.getenv('DB_HOST','db')}:{os.getenv('DB_PORT','5432')}/{os.getenv('DB_NAME','shop_db')}"
+        "postgresql://{user}:{password}@{host}:{port}/{db}".format(
+            user=os.getenv("DB_USER", "shop"),
+            password=os.getenv("DB_PASSWORD", "shop_pass"),
+            host=os.getenv("DB_HOST", "db"),
+            port=os.getenv("DB_PORT", "5432"),
+            db=os.getenv("DB_NAME", "shop_db"),
+        ),
     )
 
-    # Интервал загрузки данных в секундах
-    FETCH_INTERVAL_SECONDS = int(os.getenv("FETCH_INTERVAL_SECONDS", 300))
+    #: Интервал между фоновыми загрузками данных (в секундах).
+    FETCH_INTERVAL_SECONDS = int(
+        os.getenv("FETCH_INTERVAL_SECONDS", "300")
+    )
